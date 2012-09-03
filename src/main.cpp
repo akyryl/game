@@ -29,8 +29,12 @@
 #include "camera.h"
 #include "texture.h"
 
+#include "scene.h"
+
 #define WINDOW_WIDTH  1920
 #define WINDOW_HEIGHT 1200
+
+Scene *p_scene;
 
 struct Vertex
 {
@@ -86,6 +90,8 @@ void main()                                                                     
 
 static void RenderSceneCB()
 {
+    p_scene->renderScene();
+
     pGameCamera->OnRender();
 
     glClear(GL_COLOR_BUFFER_BIT);
@@ -120,12 +126,16 @@ static void RenderSceneCB()
 
 static void SpecialKeyboardCB(int Key, int x, int y)
 {
+    p_scene->onSpecialKeyboard();
+
     pGameCamera->OnKeyboard(Key);
 }
 
 
 static void KeyboardCB(unsigned char Key, int x, int y)
 {
+    p_scene->onKeyboard();
+
     switch (Key) {
         case 'q':
             glutLeaveMainLoop();
@@ -135,6 +145,8 @@ static void KeyboardCB(unsigned char Key, int x, int y)
 
 static void PassiveMouseCB(int x, int y)
 {
+    p_scene->onMouse(x, y);
+
     pGameCamera->OnMouse(x, y);
 }
 
@@ -245,11 +257,14 @@ static void CompileShaders()
 
 int main(int argc, char** argv)
 {
+    Scene scene;
+    p_scene = &scene;
+
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA);
     glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
     glutInitWindowPosition(100, 100);
-    glutCreateWindow("Tutorial 16");
+    glutCreateWindow("Game");
     glutGameModeString("1920x1200@32");
     glutEnterGameMode();
 
@@ -276,7 +291,7 @@ int main(int argc, char** argv)
 
     glUniform1i(gSampler, 0);
 
-    pTexture = new Texture(GL_TEXTURE_2D, "test.png");
+    pTexture = new Texture(GL_TEXTURE_2D, "../resources/test.png");
 
     if (!pTexture->Load()) {
         return 1;
