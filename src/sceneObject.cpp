@@ -11,7 +11,7 @@ SceneObject::~SceneObject()
 
 }
 
-DrawingObject SceneObject::getDrawingObject() const
+RenderObject SceneObject::getDrawingObject() const
 {
-    return m_drawingObject;
+    return m_renderObject;
 }

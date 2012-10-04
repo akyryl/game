@@ -1,7 +1,7 @@
-#include "drawingObject.h"
+#include "renderObject.h"
 
 
-DrawingObject::DrawingObject()
+RenderObject::RenderObject()
     : pTexture(NULL)
 {
     createVertexBuffer();
@@ -12,12 +12,12 @@ DrawingObject::DrawingObject()
     }
 }
 
-DrawingObject::~DrawingObject()
+RenderObject::~RenderObject()
 {
     delete pTexture;
 }
 
-void DrawingObject::createVertexBuffer()
+void RenderObject::createVertexBuffer()
 {
     Vertex Vertices[4] = { Vertex(Vector3f(-1.0f, -1.0f, 0.5773f), Vector2f(0.0f, 0.0f)),
                            Vertex(Vector3f(0.0f, -1.0f, -1.15475), Vector2f(0.5f, 0.0f)),
@@ -29,7 +29,7 @@ void DrawingObject::createVertexBuffer()
     glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_STATIC_DRAW);
 }
 
-void DrawingObject::createIndexBuffer()
+void RenderObject::createIndexBuffer()
 {
     unsigned int Indices[] = { 0, 3, 1,
                                1, 3, 2,
@@ -41,7 +41,7 @@ void DrawingObject::createIndexBuffer()
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Indices), Indices, GL_STATIC_DRAW);
 }
 
-void DrawingObject::render()
+void RenderObject::render()
 {
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);

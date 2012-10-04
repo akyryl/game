@@ -21,11 +21,11 @@ struct Vertex
     }
 };
 
-class DrawingObject
+class RenderObject
 {
 public:
-    DrawingObject();
-    virtual ~DrawingObject();
+    RenderObject();
+    virtual ~RenderObject();
 
     void render();
 

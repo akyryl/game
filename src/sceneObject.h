@@ -2,7 +2,7 @@
 #define __SCENE_OBJECT_H__
 
 
-#include "drawingObject.h"
+#include "renderObject.h"
 
 
 class SceneObject
@@ -11,10 +11,10 @@ public:
     SceneObject();
     virtual ~SceneObject();
 
-    DrawingObject getDrawingObject() const;
+    RenderObject getDrawingObject() const;
 
 private:
-    DrawingObject m_drawingObject;
+    RenderObject m_renderObject;
 };
 
 
