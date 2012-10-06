@@ -5,7 +5,7 @@
 #include <GL/glew.h>
 
 #include "camera.h"
-#include "renderObject.h"
+#include "game.h"
 
 
 static const char* pVS = "                                                          \n\
@@ -49,7 +49,7 @@ public:
     void compileShaders();
     void addShader(GLuint ShaderProgram, const char* pShaderText, GLenum ShaderType);
     void onKeyboard() const;
-    void onSpecialKeyboard() const;
+    void onSpecialKeyboard(int Key, int x, int y) const;
     void onMouse(int x, int y) const;
 
 private:
@@ -61,7 +61,8 @@ private:
     GLuint gWVPLocation;
     GLuint gSampler;
 
-    RenderObject *pDrawingObject;
+    Game *m_pGame;
+
 };
 
 

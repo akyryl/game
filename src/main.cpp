@@ -44,9 +44,7 @@ static void RenderSceneCB()
 
 static void SpecialKeyboardCB(int Key, int x, int y)
 {
-    p_scene->onSpecialKeyboard();
-
-    //pGameCamera->OnKeyboard(Key);
+    p_scene->onSpecialKeyboard(Key, x, y);
 }
 
 static void KeyboardCB(unsigned char Key, int x, int y)
@@ -62,8 +60,6 @@ static void KeyboardCB(unsigned char Key, int x, int y)
 static void PassiveMouseCB(int x, int y)
 {
     p_scene->onMouse(x, y);
-
-    //pGameCamera->OnMouse(x, y);
 }
 
 static void InitializeGlutCallbacks()

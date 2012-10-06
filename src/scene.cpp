@@ -17,7 +17,7 @@ Scene::Scene()
     glCullFace(GL_BACK);
     glEnable(GL_CULL_FACE);
 
-    pDrawingObject = new RenderObject();
+    m_pGame = new Game();
 
     compileShaders();
     glUniform1i(gSampler, 0);
@@ -25,7 +25,7 @@ Scene::Scene()
 
 Scene::~Scene()
 {
-    delete pDrawingObject;
+    delete m_pGame;
 }
 
 void Scene::renderScene() const
@@ -46,7 +46,11 @@ void Scene::renderScene() const
 
     glUniformMatrix4fv(gWVPLocation, 1, GL_TRUE, (const GLfloat*)p.GetTrans());
 
-    pDrawingObject->render();
+    const RenderObjectsArr *pRenderObjects = m_pGame->getRenderObjects();
+    RenderObjectsConstIter end = pRenderObjects->end();
+    for (RenderObjectsConstIter iter = pRenderObjects->begin(); iter != end; ++iter) {
+        (*iter)->render();
+    }
 
     glutSwapBuffers();
 }
@@ -121,10 +125,12 @@ void Scene::onKeyboard() const
 {
 }
 
-void Scene::onSpecialKeyboard() const
+void Scene::onSpecialKeyboard(int Key, int x, int y) const
 {
+    pGameCamera->OnKeyboard(Key);
 }
 
 void Scene::onMouse(int x, int y) const
 {
+    pGameCamera->OnMouse(x, y);
 }
