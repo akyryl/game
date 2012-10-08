@@ -38,7 +38,7 @@ void Scene::renderScene() const
 
     static float Scale = 0.0f;
 
-    Scale += 0.1f;
+    Scale += 0.01f;
 
     Pipeline p;
     p.Rotate(0.0f, Scale, 0.0f);
