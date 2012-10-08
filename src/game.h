@@ -15,11 +15,12 @@ class Game
     RenderObjectsArr *m_renderObjects;
 
     void init();
-    void createCar();
+    Car *getNewCar() const;
 
 public:
     Game();
     ~Game();
 
     const RenderObjectsArr *getRenderObjects() const;
+    bool onKeyboard(int Key);
 };

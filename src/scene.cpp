@@ -4,6 +4,8 @@
 
 #include <GL/freeglut.h>
 #include <string.h>
+#include <assert.h>
+
 
 Scene::Scene()
     : pGameCamera(NULL)
@@ -61,7 +63,7 @@ void Scene::compileShaders()
 
     if (ShaderProgram == 0) {
         fprintf(stderr, "Error creating shader program\n");
-        //exit(1);
+        exit(1);
     }
 
     addShader(ShaderProgram, pVS, GL_VERTEX_SHADER);
@@ -75,7 +77,7 @@ void Scene::compileShaders()
     if (Success == 0) {
         glGetProgramInfoLog(ShaderProgram, sizeof(ErrorLog), NULL, ErrorLog);
         fprintf(stderr, "Error linking shader program: '%s'\n", ErrorLog);
-        //exit(1);
+        exit(1);
     }
 
     glValidateProgram(ShaderProgram);
@@ -83,15 +85,15 @@ void Scene::compileShaders()
     if (!Success) {
         glGetProgramInfoLog(ShaderProgram, sizeof(ErrorLog), NULL, ErrorLog);
         fprintf(stderr, "Invalid shader program: '%s'\n", ErrorLog);
-        //exit(1);
+        exit(1);
     }
 
     glUseProgram(ShaderProgram);
 
     gWVPLocation = glGetUniformLocation(ShaderProgram, "gWVP");
-    //assert(gWVPLocation != 0xFFFFFFFF);
+    assert(gWVPLocation != 0xFFFFFFFF);
     gSampler = glGetUniformLocation(ShaderProgram, "gSampler");
-    //assert(gSampler != 0xFFFFFFFF);
+    assert(gSampler != 0xFFFFFFFF);
 }
 
 void Scene::addShader(GLuint ShaderProgram, const char* pShaderText, GLenum ShaderType)
@@ -100,7 +102,7 @@ void Scene::addShader(GLuint ShaderProgram, const char* pShaderText, GLenum Shad
 
     if (ShaderObj == 0) {
         fprintf(stderr, "Error creating shader type %d\n", ShaderType);
-        //exit(0);
+        exit(0);
     }
 
     const GLchar* p[1];
@@ -115,7 +117,7 @@ void Scene::addShader(GLuint ShaderProgram, const char* pShaderText, GLenum Shad
         GLchar InfoLog[1024];
         glGetShaderInfoLog(ShaderObj, 1024, NULL, InfoLog);
         fprintf(stderr, "Error compiling shader type %d: '%s'\n", ShaderType, InfoLog);
-        //exit(1);
+        exit(1);
     }
 
     glAttachShader(ShaderProgram, ShaderObj);
