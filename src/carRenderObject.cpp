@@ -19,11 +19,26 @@ CarRenderObject::~CarRenderObject()
 
 void CarRenderObject::createVertexBuffer()
 {
-    Vertex vertices[4] = {
+    Vertex vertices[12] = {
         Vertex(Vector3f(-0.5f, -1.0f, -1.0f), Vector2f(0.0f, 0.0f)),
         Vertex(Vector3f(-0.5f, -1.0f, 0.0f), Vector2f(0.0f, 1.0f)),
         Vertex(Vector3f(0.5f, -1.0f, -1.0f), Vector2f(1.0f, 0.0f)),
-        Vertex(Vector3f(0.5f, -1.0f, 0.0f), Vector2f(1.0f, 1.0f))
+        Vertex(Vector3f(0.5f, -1.0f, 0.0f), Vector2f(1.0f, 1.0f)),
+
+        Vertex(Vector3f(-1.5f, -1.0f, -2.0f), Vector2f(0.0f, 0.0f)),
+        Vertex(Vector3f(-1.5f, -1.0f, -1.0f), Vector2f(0.0f, 1.0f)),
+        Vertex(Vector3f(-0.5f, -1.0f, -2.0f), Vector2f(1.0f, 0.0f)),
+        Vertex(Vector3f(-0.5f, -1.0f, -1.0f), Vector2f(1.0f, 1.0f)),
+
+        Vertex(Vector3f(-0.5f, -1.0f, -2.0f), Vector2f(0.0f, 0.0f)),
+        Vertex(Vector3f(-0.5f, -1.0f, -1.0f), Vector2f(0.0f, 1.0f)),
+        Vertex(Vector3f(0.5f, -1.0f, -2.0f), Vector2f(1.0f, 0.0f)),
+        Vertex(Vector3f(0.5f, -1.0f, -1.0f), Vector2f(1.0f, 1.0f))/*,
+
+        Vertex(Vector3f(0.5f, -1.0f, -2.0f), Vector2f(0.0f, 0.0f)),
+        Vertex(Vector3f(0.5f, -1.0f, -1.0f), Vector2f(0.0f, 1.0f)),
+        Vertex(Vector3f(1.5f, -1.0f, -2.0f), Vector2f(1.0f, 0.0f)),
+        Vertex(Vector3f(1.5f, -1.0f, -1.0f), Vector2f(1.0f, 1.0f))*/
     };
 
     /*Vertex vertices[4] = { Vertex(Vector3f(-1.0f, -1.0f, 0.5773f), Vector2f(0.0f, 0.0f)),
@@ -44,7 +59,13 @@ void CarRenderObject::createIndexBuffer()
                                1, 2, 0 };*/
 
     unsigned int indices[] = { 0, 1, 2,
-                               1, 2, 3};
+                               1, 3, 2,
+                               4, 5, 6,
+                               5, 7, 6,
+                               8, 9, 10,
+                               9, 11, 10/*,
+                               12, 13, 14,
+                               13, 15, 14*/};
 
     glGenBuffers(1, &IBO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
@@ -71,7 +92,7 @@ void CarRenderObject::render() const
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const GLvoid*)12);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
     pTexture->Bind(GL_TEXTURE0);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, 16, GL_UNSIGNED_INT, 0);
     glDisableVertexAttribArray(0);
     glDisableVertexAttribArray(1);
 }

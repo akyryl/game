@@ -92,8 +92,8 @@ void Scene::compileShaders()
 
     gWVPLocation = glGetUniformLocation(ShaderProgram, "gWVP");
     assert(gWVPLocation != 0xFFFFFFFF);
-    gSampler = glGetUniformLocation(ShaderProgram, "gSampler");
-    assert(gSampler != 0xFFFFFFFF);
+    /*gSampler = glGetUniformLocation(ShaderProgram, "gSampler");
+    assert(gSampler != 0xFFFFFFFF);*/
 }
 
 void Scene::addShader(GLuint ShaderProgram, const char* pShaderText, GLenum ShaderType)
