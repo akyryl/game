@@ -15,9 +15,11 @@ Scene::Scene()
     pGameCamera = new Camera(m_windowWidth, m_windowHeight);
 
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-    glFrontFace(GL_CW);
-    glCullFace(GL_BACK);
-    glEnable(GL_CULL_FACE);
+    //glFrontFace(GL_CW);
+    //glCullFace(GL_BACK);
+    // enable drawing texture back side
+    glDisable(GL_CULL_FACE);
+    glEnable(GL_DEPTH_TEST);
 
     m_pGame = new Game();
 
@@ -34,7 +36,7 @@ void Scene::renderScene() const
 {
     pGameCamera->OnRender();
 
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     static float Scale = 0.0f;
 
@@ -42,7 +44,7 @@ void Scene::renderScene() const
 
     Pipeline p;
     p.Rotate(0.0f, Scale, 0.0f);
-    p.WorldPos(0.0f, 0.0f, 3.0f);
+    p.WorldPos(0.0f, -5.0f, 15.0f);
     p.SetCamera(pGameCamera->GetPos(), pGameCamera->GetTarget(), pGameCamera->GetUp());
     p.SetPerspectiveProj(60.0f, m_windowWidth, m_windowHeight, 1.0f, 100.0f);
 

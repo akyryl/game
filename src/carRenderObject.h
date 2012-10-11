@@ -35,6 +35,8 @@ private:
     GLuint IBO;
     Texture* pTexture;
 
+    unsigned int vertices_count;
+
     void createVertexBuffer();
     void createIndexBuffer();
 };
