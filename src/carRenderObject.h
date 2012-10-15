@@ -1,5 +1,5 @@
-#ifndef __DRAWING_OBJECT_H__
-#define __DRAWING_OBJECT_H__
+#ifndef __CAR_RENDER_OBJECT_H__
+#define __CAR_RENDER_OBJECT_H__
 
 
 #include <GL/glew.h>
@@ -42,4 +42,4 @@ private:
 };
 
 
-#endif // __DRAWING_OBJECT_H__
+#endif // __CAR_RENDER_OBJECT_H__

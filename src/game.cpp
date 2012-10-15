@@ -12,12 +12,14 @@ Game::~Game()
 {
     delete m_pMainCar;
     delete m_renderObjects;
+    delete m_pTrack;
 }
 
 void Game::init()
 {
     m_renderObjects = new RenderObjectsArr();
     m_pMainCar = getNewCar();
+    m_pTrack = getNewTrack();
 }
 
 Car *Game::getNewCar() const
@@ -25,6 +27,13 @@ Car *Game::getNewCar() const
     Car *pCar = new Car();
     m_renderObjects->push_back(pCar->getDrawingObject());
     return pCar;
+}
+
+Track *Game::getNewTrack() const
+{
+    Track *pTrack = new Track();
+    m_renderObjects->push_back(pTrack->getDrawingObject());
+    return pTrack;
 }
 
 const RenderObjectsArr *Game::getRenderObjects() const
