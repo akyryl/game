@@ -1,6 +1,10 @@
 #include "trackRenderObject.h"
 
 #include "carRenderObject.h"
+#include <assert.h>
+#include <string.h>
+#include "pipeline.h"
+#include "scene.h"
 
 
 TrackRenderObject::TrackRenderObject()
@@ -12,6 +16,9 @@ TrackRenderObject::TrackRenderObject()
     if (!pTexture->Load()) {
         //return 1;
     }
+
+    compileShaders();
+    glUniform1i(gSampler, 0);
 }
 
 TrackRenderObject::~TrackRenderObject()
@@ -100,8 +107,29 @@ void TrackRenderObject::createIndexBuffer()
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 }
 
-void TrackRenderObject::render() const
+void TrackRenderObject::move()
 {
+
+}
+
+void TrackRenderObject::render()
+{
+    // use track program
+    glUseProgram(m_shaderProgram);
+
+    // calculate transormation and set it
+    static float Scale = 0.0f;
+    Scale += 0.01f;
+    // TODO: use global camera
+    Camera* pGameCamera = new Camera(1920, 1200);
+    Pipeline p;
+    p.Rotate(0.0f, Scale, 0.0f);
+    p.WorldPos(0.0f, -5.0f, 15.0f);
+    p.SetCamera(pGameCamera->GetPos(), pGameCamera->GetTarget(), pGameCamera->GetUp());
+    p.SetPerspectiveProj(60.0f, 1920, 1200, 1.0f, 100.0f);
+    glUniformMatrix4fv(gWVPLocation, 1, GL_TRUE, (const GLfloat*)p.GetTrans());
+
+    // draw
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -114,4 +142,70 @@ void TrackRenderObject::render() const
     glDrawElements(GL_TRIANGLES, points_count, GL_UNSIGNED_INT, 0);
     glDisableVertexAttribArray(0);
     glDisableVertexAttribArray(1);
+}
+
+void TrackRenderObject::compileShaders()
+{
+    m_shaderProgram = glCreateProgram();
+
+    if (m_shaderProgram == 0) {
+        fprintf(stderr, "Error creating shader program\n");
+        exit(1);
+    }
+
+    addShader(m_shaderProgram, tpVS, GL_VERTEX_SHADER);
+    addShader(m_shaderProgram, tpFS, GL_FRAGMENT_SHADER);
+
+    GLint Success = 0;
+    GLchar ErrorLog[1024] = { 0 };
+
+    glLinkProgram(m_shaderProgram);
+    glGetProgramiv(m_shaderProgram, GL_LINK_STATUS, &Success);
+    if (Success == 0) {
+        glGetProgramInfoLog(m_shaderProgram, sizeof(ErrorLog), NULL, ErrorLog);
+        fprintf(stderr, "Error linking shader program: '%s'\n", ErrorLog);
+        exit(1);
+    }
+
+    glValidateProgram(m_shaderProgram);
+    glGetProgramiv(m_shaderProgram, GL_VALIDATE_STATUS, &Success);
+    if (!Success) {
+        glGetProgramInfoLog(m_shaderProgram, sizeof(ErrorLog), NULL, ErrorLog);
+        fprintf(stderr, "Invalid shader program: '%s'\n", ErrorLog);
+        exit(1);
+    }
+
+    glUseProgram(m_shaderProgram);
+
+    gWVPLocation = glGetUniformLocation(m_shaderProgram, "gWVP");
+    assert(gWVPLocation != 0xFFFFFFFF);
+    //gSampler = glGetUniformLocation(m_shaderProgram, "gSampler");
+    //assert(gSampler != 0xFFFFFFFF);
+}
+
+void TrackRenderObject::addShader(GLuint ShaderProgram, const char* pShaderText, GLenum ShaderType)
+{
+    GLuint ShaderObj = glCreateShader(ShaderType);
+
+    if (ShaderObj == 0) {
+        fprintf(stderr, "Error creating shader type %d\n", ShaderType);
+        exit(0);
+    }
+
+    const GLchar* p[1];
+    p[0] = pShaderText;
+    GLint Lengths[1];
+    Lengths[0]= strlen(pShaderText);
+    glShaderSource(ShaderObj, 1, p, Lengths);
+    glCompileShader(ShaderObj);
+    GLint success;
+    glGetShaderiv(ShaderObj, GL_COMPILE_STATUS, &success);
+    if (!success) {
+        GLchar InfoLog[1024];
+        glGetShaderInfoLog(ShaderObj, 1024, NULL, InfoLog);
+        fprintf(stderr, "Error compiling shader type %d: '%s'\n", ShaderType, InfoLog);
+        exit(1);
+    }
+
+    glAttachShader(ShaderProgram, ShaderObj);
 }

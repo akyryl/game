@@ -16,8 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef TEXTURE_H
-#define	TEXTURE_H
+#ifndef __TEXTURE_H__
+#define	__TEXTURE_H__
 
 #include <string>
 
@@ -42,5 +42,5 @@ private:
 };
 
 
-#endif	/* TEXTURE_H */
+#endif // __TEXTURE_H__
 

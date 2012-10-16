@@ -17,6 +17,7 @@ Scene::Scene()
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     //glFrontFace(GL_CW);
     //glCullFace(GL_BACK);
+
     // enable drawing texture back side
     glDisable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
@@ -32,18 +33,17 @@ Scene::~Scene()
     delete m_pGame;
 }
 
-void Scene::renderScene() const
+void Scene::renderScene()
 {
+    glUseProgram(m_shaderProgram);
+
     pGameCamera->OnRender();
-
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
     static float Scale = 0.0f;
-
     Scale += 0.01f;
 
     Pipeline p;
-    p.Rotate(0.0f, Scale, 0.0f);
+    p.Rotate(0.0f, 0.0f, 0.0f);
     p.WorldPos(0.0f, -5.0f, 15.0f);
     p.SetCamera(pGameCamera->GetPos(), pGameCamera->GetTarget(), pGameCamera->GetUp());
     p.SetPerspectiveProj(60.0f, m_windowWidth, m_windowHeight, 1.0f, 100.0f);
@@ -61,40 +61,40 @@ void Scene::renderScene() const
 
 void Scene::compileShaders()
 {
-    GLuint ShaderProgram = glCreateProgram();
+    m_shaderProgram = glCreateProgram();
 
-    if (ShaderProgram == 0) {
+    if (m_shaderProgram == 0) {
         fprintf(stderr, "Error creating shader program\n");
         exit(1);
     }
 
-    addShader(ShaderProgram, pVS, GL_VERTEX_SHADER);
-    addShader(ShaderProgram, pFS, GL_FRAGMENT_SHADER);
+    addShader(m_shaderProgram, pVS, GL_VERTEX_SHADER);
+    addShader(m_shaderProgram, pFS, GL_FRAGMENT_SHADER);
 
     GLint Success = 0;
     GLchar ErrorLog[1024] = { 0 };
 
-    glLinkProgram(ShaderProgram);
-    glGetProgramiv(ShaderProgram, GL_LINK_STATUS, &Success);
+    glLinkProgram(m_shaderProgram);
+    glGetProgramiv(m_shaderProgram, GL_LINK_STATUS, &Success);
     if (Success == 0) {
-        glGetProgramInfoLog(ShaderProgram, sizeof(ErrorLog), NULL, ErrorLog);
+        glGetProgramInfoLog(m_shaderProgram, sizeof(ErrorLog), NULL, ErrorLog);
         fprintf(stderr, "Error linking shader program: '%s'\n", ErrorLog);
         exit(1);
     }
 
-    glValidateProgram(ShaderProgram);
-    glGetProgramiv(ShaderProgram, GL_VALIDATE_STATUS, &Success);
+    glValidateProgram(m_shaderProgram);
+    glGetProgramiv(m_shaderProgram, GL_VALIDATE_STATUS, &Success);
     if (!Success) {
-        glGetProgramInfoLog(ShaderProgram, sizeof(ErrorLog), NULL, ErrorLog);
+        glGetProgramInfoLog(m_shaderProgram, sizeof(ErrorLog), NULL, ErrorLog);
         fprintf(stderr, "Invalid shader program: '%s'\n", ErrorLog);
         exit(1);
     }
 
-    glUseProgram(ShaderProgram);
+    glUseProgram(m_shaderProgram);
 
-    gWVPLocation = glGetUniformLocation(ShaderProgram, "gWVP");
+    gWVPLocation = glGetUniformLocation(m_shaderProgram, "gWVP");
     assert(gWVPLocation != 0xFFFFFFFF);
-    /*gSampler = glGetUniformLocation(ShaderProgram, "gSampler");
+    /*gSampler = glGetUniformLocation(m_shaderProgram, "gSampler");
     assert(gSampler != 0xFFFFFFFF);*/
 }
 

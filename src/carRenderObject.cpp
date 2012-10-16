@@ -205,7 +205,7 @@ void CarRenderObject::createIndexBuffer()
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 }
 
-void CarRenderObject::render() const
+void CarRenderObject::render()
 {
     /*glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);

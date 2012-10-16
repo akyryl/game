@@ -28,7 +28,7 @@ public:
     CarRenderObject();
     virtual ~CarRenderObject();
 
-    void render() const;
+    void render();
 
 private:
     GLuint VBO;

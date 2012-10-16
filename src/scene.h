@@ -49,7 +49,7 @@ public:
     Scene();
     ~Scene();
 
-    void renderScene() const;
+    void renderScene();
     void compileShaders();
     void addShader(GLuint ShaderProgram, const char* pShaderText, GLenum ShaderType);
     void onKeyboard() const;
@@ -61,6 +61,7 @@ private:
     int m_windowHeight;
 
     Camera* pGameCamera;
+    GLuint m_shaderProgram;
 
     GLuint gWVPLocation;
     GLuint gSampler;
