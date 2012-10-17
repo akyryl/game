@@ -5,6 +5,7 @@
 #include <string.h>
 #include "pipeline.h"
 #include "scene.h"
+#include "textureFactory.h"
 
 
 TrackRenderObject::TrackRenderObject()
@@ -12,10 +13,7 @@ TrackRenderObject::TrackRenderObject()
 {
     createVertexBuffer();
     createIndexBuffer();
-    pTexture = new Texture(GL_TEXTURE_2D, "../resources/test.png");
-    if (!pTexture->Load()) {
-        //return 1;
-    }
+    pTexture = TextureFactory::getCubeTexture();
 
     compileShaders();
     glUniform1i(gSampler, 0);

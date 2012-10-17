@@ -1,4 +1,5 @@
 #include "carRenderObject.h"
+#include "textureFactory.h"
 
 
 CarRenderObject::CarRenderObject()
@@ -6,10 +7,7 @@ CarRenderObject::CarRenderObject()
 {
     createVertexBuffer();
     createIndexBuffer();
-    pTexture = new Texture(GL_TEXTURE_2D, "../resources/test.png");
-    if (!pTexture->Load()) {
-        //return 1;
-    }
+    pTexture = TextureFactory::getCubeTexture();
 }
 
 CarRenderObject::~CarRenderObject()
