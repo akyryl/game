@@ -20,7 +20,6 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <assert.h>
 #include <math.h>
 #include <GL/glew.h>
 #include <GL/freeglut.h>
@@ -86,7 +85,7 @@ int main(int argc, char** argv)
     GLenum res = glewInit();
     if (res != GLEW_OK) {
       fprintf(stderr, "Error: '%s'\n", glewGetErrorString(res));
-      return 1;
+      exit(1);
     }
 
     Scene scene;
