@@ -14,7 +14,7 @@ static const char* tpVS = "                                                     
 #version 330                                                                        \n\
                                                                                     \n\
 layout (location = 0) in vec3 Position;                                             \n\
-//layout (location = 1) in vec2 TexCoord;                                             \n\
+layout (location = 1) in vec2 TexCoord;                                             \n\
 //\n\
                                                                                     \n\
 uniform mat4 gWVP;                                                                  \n\
@@ -24,14 +24,14 @@ out vec2 TexCoord0;                                                             
 void main()                                                                         \n\
 {                                                                                   \n\
     gl_Position = gWVP * vec4(Position, 1.0);                                       \n\
-//    TexCoord0 = TexCoord;                                                           \n\
+    TexCoord0 = TexCoord;                                                           \n\
 //\n\
 }";
 
 static const char* tpFS = "                                                          \n\
 #version 330                                                                        \n\
                                                                                     \n\
-//in vec2 TexCoord0;                                                                  \n\
+in vec2 TexCoord0;                                                                  \n\
 //\n\
                                                                                     \n\
 out vec4 FragColor;                                                                 \n\
@@ -40,8 +40,8 @@ uniform sampler2D gSampler;                                                     
                                                                                     \n\
 void main()                                                                         \n\
 {                                                                                   \n\
-//    FragColor = texture2D(gSampler, TexCoord0.xy);                                  \n\
-FragColor = vec4(1.0, 0.0, 0.0, 1.0);\n\
+    FragColor = texture2D(gSampler, TexCoord0.xy);                                  \n\
+//FragColor = vec4(1.0, 0.0, 0.0, 1.0);\n\
 }";
 
 class TrackRenderObject : public RenderObject

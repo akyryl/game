@@ -1,7 +1,6 @@
 #include "game.h"
 
 #include <GL/freeglut.h>
-#include "textureFactory.h"
 
 
 Game::Game()
@@ -14,7 +13,6 @@ Game::~Game()
     delete m_pMainCar;
     delete m_renderObjects;
     delete m_pTrack;
-    TextureFactory::die();
 }
 
 void Game::init()

@@ -7,6 +7,7 @@
 #include "textureFactory.h"
 #include "vertex.h"
 #include "camera.h"
+#include "commonRenderData.h"
 
 
 TrackRenderObject::TrackRenderObject()
@@ -117,15 +118,28 @@ void TrackRenderObject::render()
     glUseProgram(m_shaderProgram);
 
     // calculate transormation and set it
-    static float Scale = 0.0f;
-    Scale += 0.01f;
-    // TODO: use global camera
-    Camera* pGameCamera = new Camera(1920, 1200);
+    static float z_road_pos = 13.0f;
+    z_road_pos -= 0.01f;
+    if (z_road_pos < 10) {
+        z_road_pos = 13.0f;
+    }
+
+    Camera* pGameCamera = CommonRenderData::getInstance()->getCamera();
     Pipeline p;
-    p.Rotate(0.0f, Scale, 0.0f);
-    p.WorldPos(0.0f, -5.0f, 15.0f);
+    p.Rotate(0.0f, 0.0f, 0.0f);
+    p.WorldPos(1.5f, -5.0f, z_road_pos);
     p.SetCamera(pGameCamera->GetPos(), pGameCamera->GetTarget(), pGameCamera->GetUp());
     p.SetPerspectiveProj(60.0f, 1920, 1200, 1.0f, 100.0f);
+
+
+    // draw piece of track for all road
+
+    // TODO: refactor this ugly code
+    const float SCENE_DEPTH = 100;
+    for (int i = 0; i < SCENE_DEPTH; i += 3)
+    {
+        p.WorldPos(1.5f, -5.0f, i + z_road_pos);
+
     glUniformMatrix4fv(gWVPLocation, 1, GL_TRUE, (const GLfloat*)p.GetTrans());
 
     // draw
@@ -141,6 +155,8 @@ void TrackRenderObject::render()
     glDrawElements(GL_TRIANGLES, points_count, GL_UNSIGNED_INT, 0);
     glDisableVertexAttribArray(0);
     glDisableVertexAttribArray(1);
+
+    }
 }
 
 void TrackRenderObject::compileShaders()

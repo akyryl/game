@@ -5,6 +5,7 @@
 #include <string.h>
 #include "pipeline.h"
 #include "scene.h"
+#include "commonRenderData.h"
 
 
 CarRenderObject::CarRenderObject()
@@ -208,8 +209,8 @@ void CarRenderObject::render()
     // calculate transormation and set it
     static float Scale = 0.0f;
     Scale += 0.01f;
-    // TODO: use global camera
-    Camera* pGameCamera = new Camera(1920, 1200);
+
+    Camera* pGameCamera = CommonRenderData::getInstance()->getCamera();
     Pipeline p;
     p.Rotate(0.0f, 0.0f, 0.0f);
     p.WorldPos(0.0f, -5.0f, 15.0f);

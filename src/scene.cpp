@@ -5,14 +5,16 @@
 #include <GL/freeglut.h>
 #include <string.h>
 #include <assert.h>
+#include "commonRenderData.h"
+#include "textureFactory.h"
 
 
 Scene::Scene()
     : pGameCamera(NULL)
-    , m_windowWidth(1920)
-    , m_windowHeight(1200)
 {
-    pGameCamera = new Camera(m_windowWidth, m_windowHeight);
+    pGameCamera = CommonRenderData::getInstance()->getCamera();
+    m_windowWidth = CommonRenderData::getInstance()->getWindowWidth();
+    m_windowHeight = CommonRenderData::getInstance()->getWindowHeight();
 
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     //glFrontFace(GL_CW);
@@ -31,6 +33,8 @@ Scene::Scene()
 Scene::~Scene()
 {
     delete m_pGame;
+    TextureFactory::die();
+    CommonRenderData::getInstance()->die();
 }
 
 void Scene::renderScene()
