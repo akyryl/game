@@ -172,11 +172,6 @@ void CarRenderObject::createVertexBuffer()
         Vertex(Vector3f(0.5f, 0.0f, -4.0f), Vector2f(1.0f, 1.0f)),
     };
 
-    /*Vertex vertices[4] = { Vertex(Vector3f(-1.0f, -1.0f, 0.5773f), Vector2f(0.0f, 0.0f)),
-                           Vertex(Vector3f(0.0f, -1.0f, -1.15475), Vector2f(0.5f, 0.0f)),
-                           Vertex(Vector3f(1.0f, -1.0f, 0.5773f),  Vector2f(1.0f, 0.0f)),
-                           Vertex(Vector3f(0.0f, 1.0f, 0.0f),      Vector2f(0.5f, 1.0f)) };*/
-
     vertices_count = sizeof(vertices) / sizeof(Vertex);
     glGenBuffers(1, &VBO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -185,11 +180,6 @@ void CarRenderObject::createVertexBuffer()
 
 void CarRenderObject::createIndexBuffer()
 {
-    /*unsigned int indices[] = { 0, 3, 1,
-                               1, 3, 2,
-                               2, 3, 0,
-                               1, 2, 0 };*/
-
     int indices_count = vertices_count * 1.5;
 
     unsigned int indices[indices_count];

@@ -24,8 +24,8 @@ Scene::Scene()
 
     m_pGame = new Game();
 
-    compileShaders();
-    glUniform1i(gSampler, 0);
+    //compileShaders();
+    //glUniform1i(gSampler, 0);
 }
 
 Scene::~Scene()
