@@ -4,8 +4,9 @@
 #include <assert.h>
 #include <string.h>
 #include "pipeline.h"
-#include "scene.h"
 #include "textureFactory.h"
+#include "vertex.h"
+#include "camera.h"
 
 
 TrackRenderObject::TrackRenderObject()

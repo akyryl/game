@@ -35,7 +35,7 @@ Scene::~Scene()
 
 void Scene::renderScene()
 {
-    glUseProgram(m_shaderProgram);
+    //glUseProgram(m_shaderProgram);
 
     pGameCamera->OnRender();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
