@@ -63,7 +63,7 @@ void Scene::renderScene()
     glutSwapBuffers();
 }
 
-void Scene::compileShaders()
+/*void Scene::compileShaders()
 {
     m_shaderProgram = glCreateProgram();
 
@@ -97,12 +97,12 @@ void Scene::compileShaders()
     glUseProgram(m_shaderProgram);
 
     gWVPLocation = glGetUniformLocation(m_shaderProgram, "gWVP");
-    assert(gWVPLocation != 0xFFFFFFFF);
+    assert(gWVPLocation != 0xFFFFFFFF);*/
     /*gSampler = glGetUniformLocation(m_shaderProgram, "gSampler");
     assert(gSampler != 0xFFFFFFFF);*/
-}
+//}
 
-void Scene::addShader(GLuint ShaderProgram, const char* pShaderText, GLenum ShaderType)
+/*void Scene::addShader(GLuint ShaderProgram, const char* pShaderText, GLenum ShaderType)
 {
     GLuint ShaderObj = glCreateShader(ShaderType);
 
@@ -127,10 +127,11 @@ void Scene::addShader(GLuint ShaderProgram, const char* pShaderText, GLenum Shad
     }
 
     glAttachShader(ShaderProgram, ShaderObj);
-}
+}*/
 
-void Scene::onKeyboard() const
+void Scene::onKeyboard(int key) const
 {
+    m_pGame->onKeyboard(key);
 }
 
 void Scene::onSpecialKeyboard(int Key, int x, int y) const

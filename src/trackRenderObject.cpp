@@ -117,29 +117,35 @@ void TrackRenderObject::render()
     // use track program
     glUseProgram(m_shaderProgram);
 
-    // calculate transormation and set it
+    // track animation
+    // TODO: do animation in track object.
     static float z_road_pos = 13.0f;
     z_road_pos -= 0.01f;
     if (z_road_pos < 10) {
         z_road_pos = 13.0f;
     }
 
+    // TODO: refactor this ugly code
+    const float SCENE_DEPTH = 100;
+    const int primitiveDistance = 3;
+    for (int i = 0; i < SCENE_DEPTH; i += primitiveDistance) {
+        drawPrimitive(Vector3f(1.5f, -5.0f, i + z_road_pos));
+    }
+    for (int i = 0; i < SCENE_DEPTH; i += primitiveDistance) {
+        drawPrimitive(Vector3f(-8.5f, -5.0f, i + z_road_pos));
+    }
+}
+
+void TrackRenderObject::drawPrimitive(const Vector3f &worldPos)
+{
     Camera* pGameCamera = CommonRenderData::getInstance()->getCamera();
     Pipeline p;
     p.Rotate(0.0f, 0.0f, 0.0f);
-    p.WorldPos(1.5f, -5.0f, z_road_pos);
     p.SetCamera(pGameCamera->GetPos(), pGameCamera->GetTarget(), pGameCamera->GetUp());
-    p.SetPerspectiveProj(60.0f, 1920, 1200, 1.0f, 100.0f);
-
-
-    // draw piece of track for all road
-
-    // TODO: refactor this ugly code
-    const float SCENE_DEPTH = 100;
-    for (int i = 0; i < SCENE_DEPTH; i += 3)
-    {
-        p.WorldPos(1.5f, -5.0f, i + z_road_pos);
-
+    int windowWidth = CommonRenderData::getInstance()->getWindowWidth();
+    int windowHeight = CommonRenderData::getInstance()->getWindowHeight();
+    p.SetPerspectiveProj(60.0f, windowWidth, windowHeight, 1.0f, 100.0f);
+    p.WorldPos(worldPos.x, worldPos.y, worldPos.z);
     glUniformMatrix4fv(gWVPLocation, 1, GL_TRUE, (const GLfloat*)p.GetTrans());
 
     // draw
@@ -155,8 +161,6 @@ void TrackRenderObject::render()
     glDrawElements(GL_TRIANGLES, points_count, GL_UNSIGNED_INT, 0);
     glDisableVertexAttribArray(0);
     glDisableVertexAttribArray(1);
-
-    }
 }
 
 void TrackRenderObject::compileShaders()

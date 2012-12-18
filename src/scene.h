@@ -52,7 +52,7 @@ public:
     void renderScene();
     void compileShaders();
     void addShader(GLuint ShaderProgram, const char* pShaderText, GLenum ShaderType);
-    void onKeyboard() const;
+    void onKeyboard(int key) const;
     void onSpecialKeyboard(int Key, int x, int y) const;
     void onMouse(int x, int y) const;
 

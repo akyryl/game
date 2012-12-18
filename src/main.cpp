@@ -43,12 +43,14 @@ static void RenderSceneCB()
 
 static void SpecialKeyboardCB(int Key, int x, int y)
 {
-    p_scene->onSpecialKeyboard(Key, x, y);
+    //p_scene->onSpecialKeyboard(Key, x, y);
+    p_scene->onKeyboard(Key);
 }
 
 static void KeyboardCB(unsigned char Key, int x, int y)
 {
-    p_scene->onKeyboard();
+    // TODO: why does not work
+    //p_scene->onKeyboard(Key);
 
     switch (Key) {
         case 'q':

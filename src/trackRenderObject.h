@@ -69,6 +69,7 @@ private:
     void createIndexBuffer();
 
     void compileShaders();
+    void drawPrimitive(const Vector3f &worldPos);
     void addShader(GLuint ShaderProgram, const char* pShaderText, GLenum ShaderType);
 };
 

@@ -48,12 +48,14 @@ bool Game::onKeyboard(int Key)
     case GLUT_KEY_LEFT:
         {
             // TODO: update main car pos
+            m_pMainCar->stepLeft();
             Ret = true;
         }
         break;
     case GLUT_KEY_RIGHT:
         {
             // TODO: update main car pos
+            m_pMainCar->stepRight();
             Ret = true;
         }
         break;

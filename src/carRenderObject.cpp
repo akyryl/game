@@ -16,6 +16,9 @@ CarRenderObject::CarRenderObject()
     pTexture = TextureFactory::getCubeTexture();
     compileShaders();
     glUniform1i(gSampler, 0);
+    m_pos.x = 0;
+    m_pos.y = 0;
+    m_pos.z = 0;
 }
 
 CarRenderObject::~CarRenderObject()
@@ -213,7 +216,7 @@ void CarRenderObject::render()
     Camera* pGameCamera = CommonRenderData::getInstance()->getCamera();
     Pipeline p;
     p.Rotate(0.0f, 0.0f, 0.0f);
-    p.WorldPos(0.0f, -5.0f, 15.0f);
+    p.WorldPos(0.0f + m_pos.x, -5.0f + m_pos.y, 15.0f + m_pos.z);
     p.SetCamera(pGameCamera->GetPos(), pGameCamera->GetTarget(), pGameCamera->GetUp());
     p.SetPerspectiveProj(60.0f, 1920, 1200, 1.0f, 100.0f);
     glUniformMatrix4fv(gWVPLocation, 1, GL_TRUE, (const GLfloat*)p.GetTrans());
@@ -231,6 +234,16 @@ void CarRenderObject::render()
     glDrawElements(GL_TRIANGLES, points_count, GL_UNSIGNED_INT, 0);
     glDisableVertexAttribArray(0);
     glDisableVertexAttribArray(1);
+}
+
+void CarRenderObject::stepLeft()
+{
+    m_pos.x -= 1;
+}
+
+void CarRenderObject::stepRight()
+{
+    m_pos.x += 1;
 }
 
 void CarRenderObject::compileShaders()

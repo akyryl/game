@@ -12,6 +12,9 @@ public:
     ~Car();
 
     CarRenderObject *getDrawingObject() const;
+
+    void stepLeft();
+    void stepRight();
 };
 
 

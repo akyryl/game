@@ -50,6 +50,8 @@ public:
     virtual ~CarRenderObject();
 
     void render();
+    void stepLeft();
+    void stepRight();
 
 private:
     GLuint VBO;
@@ -60,6 +62,8 @@ private:
     GLuint gSampler;
 
     GLuint m_shaderProgram;
+
+    Vector3f m_pos;
 
     unsigned int vertices_count;
 
