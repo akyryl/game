@@ -160,26 +160,15 @@ void TrackRenderObject::initTrackVertices()
     glBufferData(GL_ARRAY_BUFFER, sizeof(m_trackVertices[0]) * m_trackVertices.size(), m_trackVertices.data(), GL_STATIC_DRAW);
 }
 
-void TrackRenderObject::updateTrackVertices()
+void TrackRenderObject::updateTrackVertices(float newX)
 {
-    // remeber first item
-    std::vector <Vertex> tempVertices;
-    tempVertices.reserve(m_trackItemVerticesCount);
-    tempVertices.assign(m_trackVertices.begin(), m_trackVertices.begin() + m_trackItemVerticesCount);
-    // set coordinates of first item to second item coordinates and so on
-    std::copy(m_trackVertices.begin() + m_trackItemVerticesCount, m_trackVertices.end(), m_trackVertices.begin());
-    // set last item coords to remebered item coordinates
-    std::copy(tempVertices.begin(), tempVertices.end(), m_trackVertices.end() - m_trackItemVerticesCount);
-    updateLastTrackItem();
-}
-
-void TrackRenderObject::updateLastTrackItem()
-{
-    // shift first item somehow
+    // copy x of first item to next one
+    for (int i = m_trackVertices.size() - 1; i >= m_trackItemVerticesCount ; --i) {
+        m_trackVertices[i].m_pos.x = m_trackVertices[i - m_trackItemVerticesCount].m_pos.x;
+    }
+    // set new X for first item
     for (int i = 0; i < m_trackItemVerticesCount; ++i) {
-        Vertex vertex = m_trackVertices[i];
-        vertex.m_pos.x += 1.f;
-        m_trackVertices[i] = vertex;
+        m_trackVertices[i].m_pos.x = m_trackVertices[i].m_pos.x + newX;
     }
 
     vertices_count = m_trackVertices.size();
@@ -215,6 +204,9 @@ void TrackRenderObject::move()
 
 }
 
+static float nextItemNewXPos = 1.f;
+static int waveEffect = 0;
+
 void TrackRenderObject::render()
 {
     // use track program
@@ -226,7 +218,12 @@ void TrackRenderObject::render()
     z_road_pos -= 0.01f;
     if (z_road_pos < 10) {
         z_road_pos = 13.0f;
-        updateTrackVertices();
+
+        waveEffect += 1;
+        if (waveEffect % 5 == 0) {
+            nextItemNewXPos = -nextItemNewXPos;
+        }
+        updateTrackVertices(nextItemNewXPos);
     }
     // :ODOT
 

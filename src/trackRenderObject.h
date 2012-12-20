@@ -72,8 +72,7 @@ private:
     int m_trackItemStep;
 
     void initTrackVertices();
-    void updateTrackVertices();
-    void updateLastTrackItem();
+    void updateTrackVertices(float newX);
 
     void createVertexBuffer();
     void createIndexBuffer();
