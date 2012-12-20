@@ -67,7 +67,8 @@ TrackRenderObject::TrackRenderObject()
 {
     m_trackDeep = 100;
     m_trackItemStep = 3;
-    createVertexBuffer();
+    //createVertexBuffer();
+    initTrackVertices();
     createIndexBuffer();
     pTexture = TextureFactory::getCubeTexture();
 
@@ -144,36 +145,47 @@ void TrackRenderObject::initTrackVertices()
     // TODO: add reserve
     // m_trackVertices.reserve(m_trackItemVerticesCount * m_trackDeep);
 
+    // build vertices from far one to closest one
     for (int i = 0; i < m_trackDeep; i += m_trackItemStep) {
         for (int j = 0; j < m_trackItemVerticesCount; ++j) {
             Vertex vertex = m_trackItemTemplate[j];
-            vertex.m_pos.z = vertex.m_pos.z += i;
+            vertex.m_pos.z += (m_trackDeep - i);
             m_trackVertices.push_back(vertex);
         }
-        //std::vector <Vertex>::iterator trackVerticesIter = m_trackVertices.begin();
-        // trackVerticesIter = std::copy(m_trackItemTemplate, m_trackItemTemplate + trackElementVertexesSize, trackVerticesIter);
     }
 
-    vertices_count = sizeof(m_trackVertices) / sizeof(Vertex);
+    vertices_count = m_trackVertices.size();
     glGenBuffers(1, &VBO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(m_trackVertices), m_trackVertices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(m_trackVertices[0]) * m_trackVertices.size(), m_trackVertices.data(), GL_STATIC_DRAW);
 }
 
-void TrackRenderObject::updateTracVertices()
+void TrackRenderObject::updateTrackVertices()
 {
+    // remeber first item
+    std::vector <Vertex> tempVertices;
+    tempVertices.reserve(m_trackItemVerticesCount);
+    tempVertices.assign(m_trackVertices.begin(), m_trackVertices.begin() + m_trackItemVerticesCount);
+    // set coordinates of first item to second item coordinates and so on
     std::copy(m_trackVertices.begin() + m_trackItemVerticesCount, m_trackVertices.end(), m_trackVertices.begin());
-    addNewTrackItem();
+    // set last item coords to remebered item coordinates
+    std::copy(tempVertices.begin(), tempVertices.end(), m_trackVertices.end() - m_trackItemVerticesCount);
+    updateLastTrackItem();
 }
 
-void TrackRenderObject::addNewTrackItem()
+void TrackRenderObject::updateLastTrackItem()
 {
-    for (int j = 0; j < m_trackItemVerticesCount; ++j) {
-        Vertex vertex = m_trackItemTemplate[j];
-        // Add last track item
-        vertex.m_pos.z = vertex.m_pos.z += 99;
-        m_trackVertices.push_back(vertex);
+    // shift first item somehow
+    for (int i = 0; i < m_trackItemVerticesCount; ++i) {
+        Vertex vertex = m_trackVertices[i];
+        vertex.m_pos.x += 1.f;
+        m_trackVertices[i] = vertex;
     }
+
+    vertices_count = m_trackVertices.size();
+    glGenBuffers(1, &VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(m_trackVertices[0]) * m_trackVertices.size(), m_trackVertices.data(), GL_STATIC_DRAW);
 }
 
 void TrackRenderObject::createIndexBuffer()
@@ -214,17 +226,11 @@ void TrackRenderObject::render()
     z_road_pos -= 0.01f;
     if (z_road_pos < 10) {
         z_road_pos = 13.0f;
+        updateTrackVertices();
     }
+    // :ODOT
 
-    // TODO: refactor this ugly code
-    const float SCENE_DEPTH = 100;
-    const int primitiveDistance = 3;
-    for (int i = 0; i < SCENE_DEPTH; i += primitiveDistance) {
-        drawPrimitive(Vector3f(1.5f, -5.0f, i + z_road_pos));
-    }
-    for (int i = 0; i < SCENE_DEPTH; i += primitiveDistance) {
-        drawPrimitive(Vector3f(-8.5f, -5.0f, i + z_road_pos));
-    }
+    drawPrimitive(Vector3f(1.5f, -5.0f, z_road_pos));
 }
 
 void TrackRenderObject::drawPrimitive(const Vector3f &worldPos)
