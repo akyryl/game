@@ -8,7 +8,9 @@
 #include "renderObject.h"
 #include "math_3d.h"
 #include "texture.h"
+#include <vector>
 
+class Vertex;
 
 static const char* tpVS = "                                                          \n\
 #version 330                                                                        \n\
@@ -65,12 +67,23 @@ private:
 
     unsigned int vertices_count;
 
+    std::vector <Vertex> m_trackVertices;
+    int m_trackDeep;
+    int m_trackItemStep;
+
+    void initTrackVertices();
+    void updateTracVertices();
+    void addNewTrackItem();
+
     void createVertexBuffer();
     void createIndexBuffer();
 
     void compileShaders();
     void drawPrimitive(const Vector3f &worldPos);
     void addShader(GLuint ShaderProgram, const char* pShaderText, GLenum ShaderType);
+
+    static const Vertex m_trackItemTemplate[];
+    static int m_trackItemVerticesCount;
 };
 
 

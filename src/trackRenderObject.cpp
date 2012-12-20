@@ -9,10 +9,64 @@
 #include "camera.h"
 #include "commonRenderData.h"
 
+const Vertex TrackRenderObject::m_trackItemTemplate[] =
+{
+    // top
+
+    Vertex(Vector3f(0.0f, 1.0f, -1.0f), Vector2f(0.0f, 0.0f)),
+    Vertex(Vector3f(0.0f, 1.0f, 0.0f), Vector2f(0.0f, 1.0f)),
+    Vertex(Vector3f(1.0f, 1.0f, -1.0f), Vector2f(1.0f, 0.0f)),
+    Vertex(Vector3f(1.0f, 1.0f, 0.0f), Vector2f(1.0f, 1.0f)),
+
+    Vertex(Vector3f(0.0f, 1.0f, -2.0f), Vector2f(0.0f, 0.0f)),
+    Vertex(Vector3f(0.0f, 1.0f, -1.0f), Vector2f(0.0f, 1.0f)),
+    Vertex(Vector3f(1.0f, 1.0f, -2.0f), Vector2f(1.0f, 0.0f)),
+    Vertex(Vector3f(1.0f, 1.0f, -1.0f), Vector2f(1.0f, 1.0f)),
+
+    // front side
+
+    Vertex(Vector3f(0.0f, 1.0f, 0.0f), Vector2f(0.0f, 0.0f)),
+    Vertex(Vector3f(0.0f, 0.0f, 0.0f), Vector2f(0.0f, 1.0f)),
+    Vertex(Vector3f(1.0f, 1.0f, 0.0f), Vector2f(1.0f, 0.0f)),
+    Vertex(Vector3f(1.0f, 0.0f, 0.0f), Vector2f(1.0f, 1.0f)),
+
+    // right sides
+
+    Vertex(Vector3f(0.0f, 1.0f, 0.0f), Vector2f(0.0f, 0.0f)),
+    Vertex(Vector3f(0.0f, 0.0f, 0.0f), Vector2f(0.0f, 1.0f)),
+    Vertex(Vector3f(0.0f, 1.0f, -1.0f), Vector2f(1.0f, 0.0f)),
+    Vertex(Vector3f(0.0f, 0.0f, -1.0f), Vector2f(1.0f, 1.0f)),
+
+    Vertex(Vector3f(0.0f, 1.0f, -1.0f), Vector2f(0.0f, 0.0f)),
+    Vertex(Vector3f(0.0f, 0.0f, -1.0f), Vector2f(0.0f, 1.0f)),
+    Vertex(Vector3f(0.0f, 1.0f, -2.0f), Vector2f(1.0f, 0.0f)),
+    Vertex(Vector3f(0.0f, 0.0f, -2.0f), Vector2f(1.0f, 1.0f)),
+
+    Vertex(Vector3f(1.0f, 1.0f, 0.0f), Vector2f(0.0f, 0.0f)),
+    Vertex(Vector3f(1.0f, 0.0f, 0.0f), Vector2f(0.0f, 1.0f)),
+    Vertex(Vector3f(1.0f, 1.0f, -1.0f), Vector2f(1.0f, 0.0f)),
+    Vertex(Vector3f(1.0f, 0.0f, -1.0f), Vector2f(1.0f, 1.0f)),
+
+    Vertex(Vector3f(1.0f, 1.0f, -1.0f), Vector2f(0.0f, 0.0f)),
+    Vertex(Vector3f(1.0f, 0.0f, -1.0f), Vector2f(0.0f, 1.0f)),
+    Vertex(Vector3f(1.0f, 1.0f, -2.0f), Vector2f(1.0f, 0.0f)),
+    Vertex(Vector3f(1.0f, 0.0f, -2.0f), Vector2f(1.0f, 1.0f)),
+
+    // back side
+
+    Vertex(Vector3f(0.0f, 1.0f, -2.0f), Vector2f(0.0f, 0.0f)),
+    Vertex(Vector3f(0.0f, 0.0f, -2.0f), Vector2f(0.0f, 1.0f)),
+    Vertex(Vector3f(1.0f, 1.0f, -2.0f), Vector2f(1.0f, 0.0f)),
+    Vertex(Vector3f(1.0f, 0.0f, -2.0f), Vector2f(1.0f, 1.0f)),
+};
+
+int TrackRenderObject::m_trackItemVerticesCount = sizeof(TrackRenderObject::m_trackItemTemplate) / sizeof(Vertex);
 
 TrackRenderObject::TrackRenderObject()
     : pTexture(NULL)
 {
+    m_trackDeep = 100;
+    m_trackItemStep = 3;
     createVertexBuffer();
     createIndexBuffer();
     pTexture = TextureFactory::getCubeTexture();
@@ -83,6 +137,43 @@ void TrackRenderObject::createVertexBuffer()
     glGenBuffers(1, &VBO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+}
+
+void TrackRenderObject::initTrackVertices()
+{
+    // TODO: add reserve
+    // m_trackVertices.reserve(m_trackItemVerticesCount * m_trackDeep);
+
+    for (int i = 0; i < m_trackDeep; i += m_trackItemStep) {
+        for (int j = 0; j < m_trackItemVerticesCount; ++j) {
+            Vertex vertex = m_trackItemTemplate[j];
+            vertex.m_pos.z = vertex.m_pos.z += i;
+            m_trackVertices.push_back(vertex);
+        }
+        //std::vector <Vertex>::iterator trackVerticesIter = m_trackVertices.begin();
+        // trackVerticesIter = std::copy(m_trackItemTemplate, m_trackItemTemplate + trackElementVertexesSize, trackVerticesIter);
+    }
+
+    vertices_count = sizeof(m_trackVertices) / sizeof(Vertex);
+    glGenBuffers(1, &VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(m_trackVertices), m_trackVertices.data(), GL_STATIC_DRAW);
+}
+
+void TrackRenderObject::updateTracVertices()
+{
+    std::copy(m_trackVertices.begin() + m_trackItemVerticesCount, m_trackVertices.end(), m_trackVertices.begin());
+    addNewTrackItem();
+}
+
+void TrackRenderObject::addNewTrackItem()
+{
+    for (int j = 0; j < m_trackItemVerticesCount; ++j) {
+        Vertex vertex = m_trackItemTemplate[j];
+        // Add last track item
+        vertex.m_pos.z = vertex.m_pos.z += 99;
+        m_trackVertices.push_back(vertex);
+    }
 }
 
 void TrackRenderObject::createIndexBuffer()
