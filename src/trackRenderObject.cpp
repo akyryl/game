@@ -65,7 +65,7 @@ int TrackRenderObject::m_trackItemVerticesCount = sizeof(TrackRenderObject::m_tr
 TrackRenderObject::TrackRenderObject()
     : pTexture(NULL)
 {
-    m_trackDeep = 100;
+    m_trackDeep = 99;
     m_trackItemStep = 3;
     //createVertexBuffer();
     initTrackVertices();
@@ -142,11 +142,12 @@ void TrackRenderObject::createVertexBuffer()
 
 void TrackRenderObject::initTrackVertices()
 {
-    // TODO: add reserve
-    // m_trackVertices.reserve(m_trackItemVerticesCount * m_trackDeep);
+    m_trackVertices.clear();
+    const int trackVerticesCount = m_trackDeep / m_trackItemStep * m_trackItemVerticesCount;
+    m_trackVertices.reserve(trackVerticesCount);
 
     // build vertices from far one to closest one
-    for (int i = 0; i < m_trackDeep; i += m_trackItemStep) {
+    for (int i = 0; i < m_trackDeep - 1; i += m_trackItemStep) {
         for (int j = 0; j < m_trackItemVerticesCount; ++j) {
             Vertex vertex = m_trackItemTemplate[j];
             vertex.m_pos.z += (m_trackDeep - i);
@@ -156,8 +157,7 @@ void TrackRenderObject::initTrackVertices()
 
     vertices_count = m_trackVertices.size();
     glGenBuffers(1, &VBO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(m_trackVertices[0]) * m_trackVertices.size(), m_trackVertices.data(), GL_STATIC_DRAW);
+    bindVertexBuffer();
 }
 
 void TrackRenderObject::updateTrackVertices(float newX)
@@ -170,9 +170,11 @@ void TrackRenderObject::updateTrackVertices(float newX)
     for (int i = 0; i < m_trackItemVerticesCount; ++i) {
         m_trackVertices[i].m_pos.x = m_trackVertices[i].m_pos.x + newX;
     }
+    bindVertexBuffer();
+}
 
-    vertices_count = m_trackVertices.size();
-    glGenBuffers(1, &VBO);
+void TrackRenderObject::bindVertexBuffer()
+{
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(m_trackVertices[0]) * m_trackVertices.size(), m_trackVertices.data(), GL_STATIC_DRAW);
 }
@@ -209,9 +211,6 @@ static int waveEffect = 0;
 
 void TrackRenderObject::render()
 {
-    // use track program
-    glUseProgram(m_shaderProgram);
-
     // track animation
     // TODO: do animation in track object.
     static float z_road_pos = 13.0f;
@@ -227,11 +226,13 @@ void TrackRenderObject::render()
     }
     // :ODOT
 
-    drawPrimitive(Vector3f(1.5f, -5.0f, z_road_pos));
+    renderTrack(Vector3f(1.5f, -5.0f, z_road_pos));
 }
 
-void TrackRenderObject::drawPrimitive(const Vector3f &worldPos)
+void TrackRenderObject::renderTrack(const Vector3f &worldPos)
 {
+    glUseProgram(m_shaderProgram);
+
     Camera* pGameCamera = CommonRenderData::getInstance()->getCamera();
     Pipeline p;
     p.Rotate(0.0f, 0.0f, 0.0f);

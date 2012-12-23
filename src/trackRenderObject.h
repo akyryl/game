@@ -75,10 +75,11 @@ private:
     void updateTrackVertices(float newX);
 
     void createVertexBuffer();
+    void bindVertexBuffer();
     void createIndexBuffer();
 
     void compileShaders();
-    void drawPrimitive(const Vector3f &worldPos);
+    void renderTrack(const Vector3f &worldPos);
     void addShader(GLuint ShaderProgram, const char* pShaderText, GLenum ShaderType);
 
     static const Vertex m_trackItemTemplate[];
