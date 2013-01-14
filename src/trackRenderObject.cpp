@@ -61,13 +61,14 @@ const Vertex TrackRenderObject::m_trackItemTemplate[] =
 };
 
 int TrackRenderObject::m_trackItemVerticesCount = sizeof(TrackRenderObject::m_trackItemTemplate) / sizeof(Vertex);
+int TrackRenderObject::m_trackLinesCount = 2;
 
 TrackRenderObject::TrackRenderObject()
     : pTexture(NULL)
 {
     m_trackDeep = 99;
     m_trackItemStep = 3;
-    //createVertexBuffer();
+    m_trackWidth = 8;
     initTrackVertices();
     createIndexBuffer();
     pTexture = TextureFactory::getCubeTexture();
@@ -81,78 +82,19 @@ TrackRenderObject::~TrackRenderObject()
 
 }
 
-void TrackRenderObject::createVertexBuffer()
-{
-    Vertex vertices[] = {
-
-        // top
-
-        Vertex(Vector3f(0.0f, 1.0f, -1.0f), Vector2f(0.0f, 0.0f)),
-        Vertex(Vector3f(0.0f, 1.0f, 0.0f), Vector2f(0.0f, 1.0f)),
-        Vertex(Vector3f(1.0f, 1.0f, -1.0f), Vector2f(1.0f, 0.0f)),
-        Vertex(Vector3f(1.0f, 1.0f, 0.0f), Vector2f(1.0f, 1.0f)),
-
-        Vertex(Vector3f(0.0f, 1.0f, -2.0f), Vector2f(0.0f, 0.0f)),
-        Vertex(Vector3f(0.0f, 1.0f, -1.0f), Vector2f(0.0f, 1.0f)),
-        Vertex(Vector3f(1.0f, 1.0f, -2.0f), Vector2f(1.0f, 0.0f)),
-        Vertex(Vector3f(1.0f, 1.0f, -1.0f), Vector2f(1.0f, 1.0f)),
-
-        // front side
-
-        Vertex(Vector3f(0.0f, 1.0f, 0.0f), Vector2f(0.0f, 0.0f)),
-        Vertex(Vector3f(0.0f, 0.0f, 0.0f), Vector2f(0.0f, 1.0f)),
-        Vertex(Vector3f(1.0f, 1.0f, 0.0f), Vector2f(1.0f, 0.0f)),
-        Vertex(Vector3f(1.0f, 0.0f, 0.0f), Vector2f(1.0f, 1.0f)),
-
-        // right sides
-
-        Vertex(Vector3f(0.0f, 1.0f, 0.0f), Vector2f(0.0f, 0.0f)),
-        Vertex(Vector3f(0.0f, 0.0f, 0.0f), Vector2f(0.0f, 1.0f)),
-        Vertex(Vector3f(0.0f, 1.0f, -1.0f), Vector2f(1.0f, 0.0f)),
-        Vertex(Vector3f(0.0f, 0.0f, -1.0f), Vector2f(1.0f, 1.0f)),
-
-        Vertex(Vector3f(0.0f, 1.0f, -1.0f), Vector2f(0.0f, 0.0f)),
-        Vertex(Vector3f(0.0f, 0.0f, -1.0f), Vector2f(0.0f, 1.0f)),
-        Vertex(Vector3f(0.0f, 1.0f, -2.0f), Vector2f(1.0f, 0.0f)),
-        Vertex(Vector3f(0.0f, 0.0f, -2.0f), Vector2f(1.0f, 1.0f)),
-
-        Vertex(Vector3f(1.0f, 1.0f, 0.0f), Vector2f(0.0f, 0.0f)),
-        Vertex(Vector3f(1.0f, 0.0f, 0.0f), Vector2f(0.0f, 1.0f)),
-        Vertex(Vector3f(1.0f, 1.0f, -1.0f), Vector2f(1.0f, 0.0f)),
-        Vertex(Vector3f(1.0f, 0.0f, -1.0f), Vector2f(1.0f, 1.0f)),
-
-        Vertex(Vector3f(1.0f, 1.0f, -1.0f), Vector2f(0.0f, 0.0f)),
-        Vertex(Vector3f(1.0f, 0.0f, -1.0f), Vector2f(0.0f, 1.0f)),
-        Vertex(Vector3f(1.0f, 1.0f, -2.0f), Vector2f(1.0f, 0.0f)),
-        Vertex(Vector3f(1.0f, 0.0f, -2.0f), Vector2f(1.0f, 1.0f)),
-
-        // back side
-
-        Vertex(Vector3f(0.0f, 1.0f, -2.0f), Vector2f(0.0f, 0.0f)),
-        Vertex(Vector3f(0.0f, 0.0f, -2.0f), Vector2f(0.0f, 1.0f)),
-        Vertex(Vector3f(1.0f, 1.0f, -2.0f), Vector2f(1.0f, 0.0f)),
-        Vertex(Vector3f(1.0f, 0.0f, -2.0f), Vector2f(1.0f, 1.0f)),
-    };
-
-    vertices_count = sizeof(vertices) / sizeof(Vertex);
-    glGenBuffers(1, &VBO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-}
-
 void TrackRenderObject::initTrackVertices()
 {
     m_trackVertices.clear();
-    const int trackVerticesCount = m_trackDeep / m_trackItemStep * m_trackItemVerticesCount;
+    const int trackItemsCount = m_trackDeep / m_trackItemStep;
+    const int trackVerticesCount = trackItemsCount * m_trackItemVerticesCount * m_trackLinesCount;
     m_trackVertices.reserve(trackVerticesCount);
 
-    // build vertices from far one to closest one
+    // build vertices from farther to closest one
     for (int i = 0; i < m_trackDeep - 1; i += m_trackItemStep) {
-        for (int j = 0; j < m_trackItemVerticesCount; ++j) {
-            Vertex vertex = m_trackItemTemplate[j];
-            vertex.m_pos.z += (m_trackDeep - i);
-            m_trackVertices.push_back(vertex);
-        }
+        // add left item
+        addTrackItemVertices(Vector3f(0, 0, m_trackDeep - i));
+        // add right item
+        addTrackItemVertices(Vector3f(0, m_trackWidth, m_trackDeep - i));
     }
 
     vertices_count = m_trackVertices.size();
@@ -160,14 +102,25 @@ void TrackRenderObject::initTrackVertices()
     bindVertexBuffer();
 }
 
+void TrackRenderObject::addTrackItemVertices(Vector3f movingVertex)
+{
+    for (int i = 0; i < m_trackItemVerticesCount; ++i) {
+        Vertex vertex = m_trackItemTemplate[i];
+        vertex.m_pos.x += movingVertex.x;
+        vertex.m_pos.y += movingVertex.y;
+        vertex.m_pos.z += movingVertex.z;
+        m_trackVertices.push_back(vertex);
+    }
+}
+
 void TrackRenderObject::updateTrackVertices(float newX)
 {
     // copy x of first item to next one
     for (int i = m_trackVertices.size() - 1; i >= m_trackItemVerticesCount ; --i) {
-        m_trackVertices[i].m_pos.x = m_trackVertices[i - m_trackItemVerticesCount].m_pos.x;
+        m_trackVertices[i].m_pos.x = m_trackVertices[i - m_trackItemVerticesCount * m_trackLinesCount].m_pos.x;
     }
     // set new X for first item
-    for (int i = 0; i < m_trackItemVerticesCount; ++i) {
+    for (int i = 0; i < m_trackItemVerticesCount * m_trackLinesCount; ++i) {
         m_trackVertices[i].m_pos.x = m_trackVertices[i].m_pos.x + newX;
     }
     bindVertexBuffer();

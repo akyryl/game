@@ -70,8 +70,10 @@ private:
     std::vector <Vertex> m_trackVertices;
     int m_trackDeep;
     int m_trackItemStep;
+    int m_trackWidth;
 
     void initTrackVertices();
+    void addTrackItemVertices(Vector3f movingVertex);
     void updateTrackVertices(float newX);
 
     void createVertexBuffer();
@@ -84,6 +86,7 @@ private:
 
     static const Vertex m_trackItemTemplate[];
     static int m_trackItemVerticesCount;
+    static int m_trackLinesCount;
 };
 
 
