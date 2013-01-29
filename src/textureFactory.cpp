@@ -6,7 +6,7 @@ Texture *TextureFactory::m_pCubeTexture = 0;
 Texture *TextureFactory::getCubeTexture()
 {
     if (TextureFactory::m_pCubeTexture == 0) {
-        TextureFactory::m_pCubeTexture = new Texture(GL_TEXTURE_2D, "../resources/test.png");
+        TextureFactory::m_pCubeTexture = new Texture(GL_TEXTURE_2D, "../resources/test.bmp");
         assert(TextureFactory::m_pCubeTexture->Load());
     }
     return TextureFactory::m_pCubeTexture;

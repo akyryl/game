@@ -28,7 +28,7 @@ Texture::Texture(GLenum TextureTarget, const std::string& FileName)
 
 bool Texture::Load()
 {
-    try {
+    /*try {
         m_pImage = new Magick::Image(m_fileName);
         m_pImage->write(&m_blob, "RGBA");
     }
@@ -41,8 +41,47 @@ bool Texture::Load()
     glBindTexture(m_textureTarget, m_textureObj);
     glTexImage2D(m_textureTarget, 0, GL_RGB, m_pImage->columns(), m_pImage->rows(), -0.5, GL_RGBA, GL_UNSIGNED_BYTE, m_blob.data());
     glTexParameterf(m_textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameterf(m_textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameterf(m_textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);*/
 
+    //GLuint texture;
+    int width, height;
+    void * data;
+    FILE * file;
+
+    // open texture data
+    file = fopen( m_fileName.c_str(), "rb" );
+    if ( file == NULL ) return 0;
+
+    // allocate buffer
+    width = 480;
+    height = 480;
+    data = malloc( width * height * 3 );
+
+    // read texture data
+    fread( data, width * height * 3, 1, file );
+    fclose( file );
+
+    // allocate a texture name
+    glGenTextures( 1, &m_textureObj );
+
+    // select our current texture
+    glBindTexture( GL_TEXTURE_2D, m_textureObj );
+
+    // select modulate to mix texture with color for shading
+    glTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE );
+
+    // when texture area is small, bilinear filter the closest mipmap
+    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST );
+
+    // when texture area is large, bilinear filter the first mipmap
+    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+
+    // build our texture mipmaps
+    gluBuild2DMipmaps( GL_TEXTURE_2D, 3, width, height,
+                       GL_RGB, GL_UNSIGNED_BYTE, data );
+
+    // free buffer
+    free( data );
     return true;
 }
 

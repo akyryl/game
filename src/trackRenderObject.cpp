@@ -94,7 +94,7 @@ void TrackRenderObject::initTrackVertices()
         // add left item
         addTrackItemVertices(Vector3f(0, 0, m_trackDeep - i));
         // add right item
-        addTrackItemVertices(Vector3f(0, m_trackWidth, m_trackDeep - i));
+        addTrackItemVertices(Vector3f(-m_trackWidth, 0, m_trackDeep - i));
     }
 
     vertices_count = m_trackVertices.size();
@@ -116,7 +116,7 @@ void TrackRenderObject::addTrackItemVertices(Vector3f movingVertex)
 void TrackRenderObject::updateTrackVertices(float newX)
 {
     // copy x of first item to next one
-    for (int i = m_trackVertices.size() - 1; i >= m_trackItemVerticesCount ; --i) {
+    for (int i = m_trackVertices.size() - 1; i >= m_trackItemVerticesCount * m_trackLinesCount; --i) {
         m_trackVertices[i].m_pos.x = m_trackVertices[i - m_trackItemVerticesCount * m_trackLinesCount].m_pos.x;
     }
     // set new X for first item
@@ -167,7 +167,7 @@ void TrackRenderObject::render()
     // track animation
     // TODO: do animation in track object.
     static float z_road_pos = 13.0f;
-    z_road_pos -= 0.01f;
+    z_road_pos -= 0.1f;
     if (z_road_pos < 10) {
         z_road_pos = 13.0f;
 
